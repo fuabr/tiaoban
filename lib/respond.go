@@ -16,8 +16,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 
-	"github.com/johlanse/study_xxqg/conf"
-	"github.com/johlanse/study_xxqg/model"
+	"github.com/fuabr/tiaoban/conf"
+	"github.com/fuabr/tiaoban/model"
 )
 
 const (

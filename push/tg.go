@@ -15,11 +15,11 @@ import (
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/johlanse/study_xxqg/conf"
-	"github.com/johlanse/study_xxqg/lib"
-	"github.com/johlanse/study_xxqg/model"
-	"github.com/johlanse/study_xxqg/utils"
-	"github.com/johlanse/study_xxqg/utils/update"
+	"github.com/fuabr/tiaoban/conf"
+	"github.com/fuabr/tiaoban/lib"
+	"github.com/fuabr/tiaoban/model"
+	"github.com/fuabr/tiaoban/utils"
+	"github.com/fuabr/tiaoban/utils/update"
 )
 
 var (
