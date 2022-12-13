@@ -16,9 +16,9 @@ import (
 	log "github.com/sirupsen/logrus"
 	goqrcode "github.com/skip2/go-qrcode"
 
-	"github.comfuabr/tiaoban/conf"
-	"github.comfuabr/tiaoban/model"
-	"github.comfuabr/tiaoban/utils"
+	"github.com/fuabr/tiaoban/conf"
+	"github.com/fuabr/tiaoban/model"
+	"github.com/fuabr/tiaoban/utils"
 )
 
 // Core
