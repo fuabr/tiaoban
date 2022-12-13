@@ -1,4 +1,4 @@
-module github.com/johlanse/study_xxqg
+module github.com/fuabr/tiaoban
 
 go 1.18
 
