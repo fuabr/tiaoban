@@ -21,8 +21,6 @@ COPY conf/config_default.yml /opt/config/config.yml
 COPY conf/QuestionBank.db /opt/QuestionBank.db
 
 RUN  chmod -R 777 /opt/study_xxqg && \
-     cd /opt/ && \
-     ./study_xxqg --init
 
 EXPOSE 8080
 
