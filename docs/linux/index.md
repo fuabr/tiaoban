@@ -1,6 +1,6 @@
 ## 可执行文件运行
 
-+ 本地访问[Releases]([Release](https://github.com/johlanse/study_xxqg/releases)) ,查找对应版本并复制链接
++ 本地访问[Releases]([Release](https://github.com/fuabr/tiaoban/releases)) ,查找对应版本并复制链接
 + 使用wget下载对应版本压缩包
 + > tar -xzvf study_xxqg_linux_amd64.tar.gz
 + 运行 ```./study_xxqg --init```,首次运行会生成默认配置文件
@@ -9,7 +9,7 @@
 
 ### 一键安装脚本
 ```shell
-wget  https://raw.githubusercontent.com/johlanse/study_xxqg/main/docs/study_xxqg_install.py && python3 study_xxqg_install.py
+wget  https://raw.githubusercontent.com/fuabr/tiaoban/main/docs/study_xxqg_install.py && python3 study_xxqg_install.py
 ```
 
 ## docker运行
@@ -27,7 +27,7 @@ docker run --name study_xxqg -d -p 8080:8080 -v /etc/study_xxqg/:/opt/config/  j
 ## docker-compose运行
 
 ```shell
-wget https://raw.githubusercontent.com/johlanse/study_xxqg/main/docker-compose.yml
+wget https://raw.githubusercontent.com/fuabr/tiaoban/main/docker-compose.yml
 docker-compose up -d
 ```
 

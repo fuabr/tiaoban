@@ -176,7 +176,7 @@ func InitConfig(path string, restart func()) {
 			log.Panicln("读取配置文件出现未知错误" + err.Error())
 		}
 	}
-	viper.SetDefault("scheme", "https://fubar.github.io/tiaoban/scheme.html?url=")
+	viper.SetDefault("scheme", "https://johlanse.github.io/study_xxqg/scheme.html?")
 	viper.SetDefault("special_min_score", 10)
 	viper.SetDefault("tg.custom_api", "https://api.telegram.org")
 	viper.AutomaticEnv()
@@ -213,7 +213,7 @@ func InitConfig(path string, restart func()) {
 	//	log.Panicln("配置文件解析失败，请检查配置文件")
 	//}
 	//if config.Scheme == "" {
-	//	config.Scheme = "https://fubar.github.io/tiaoban/scheme.html?url="
+	//	config.Scheme = "https://johlanse.github.io/study_xxqg/scheme.html?"
 	//}
 	//if config.SpecialMinScore == 0 {
 	//	config.SpecialMinScore = 10

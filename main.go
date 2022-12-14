@@ -22,14 +22,14 @@ import (
 	nested "github.com/Lyrics-you/sail-logrus-formatter/sailor"
 	"github.com/huoxue1/xdaemon"
 
-	"github.com/johlanse/study_xxqg/conf"
-	"github.com/johlanse/study_xxqg/utils"
-	// "github.com/johlanse/study_xxqg/gui"
-	"github.com/johlanse/study_xxqg/lib"
-	"github.com/johlanse/study_xxqg/model"
-	"github.com/johlanse/study_xxqg/push"
-	"github.com/johlanse/study_xxqg/utils/update"
-	"github.com/johlanse/study_xxqg/web"
+	"github.com/fuabr/tiaoban/conf"
+	"github.com/fuabr/tiaoban/utils"
+	// "github.com/fuabr/tiaoban/gui"
+	"github.com/fuabr/tiaoban/lib"
+	"github.com/fuabr/tiaoban/model"
+	"github.com/fuabr/tiaoban/push"
+	"github.com/fuabr/tiaoban/utils/update"
+	"github.com/fuabr/tiaoban/web"
 )
 
 var (
@@ -96,7 +96,7 @@ func init() {
 	})
 	if !utils.CheckQuestionDB() {
 		go utils.DownloadDbFile()
-		//log.Errorln("题库文件不存在或已损坏，请手动前往 https://github.com/johlanse/study_xxqg/blob/main/conf/QuestionBank.db 下载并放入程序根目录")
+		//log.Errorln("题库文件不存在或已损坏，请手动前往 https://github.com/fuabr/tiaoban/blob/main/conf/QuestionBank.db 下载并放入程序根目录")
 	}
 }
 
