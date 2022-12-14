@@ -1,7 +1,6 @@
 package push
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -15,6 +14,7 @@ import (
 
 	"github.com/fuabr/tiaoban/conf"
 	"github.com/fuabr/tiaoban/lib"
+	"github.com/fuabr/tiaoban/lib/state"
 	"github.com/fuabr/tiaoban/model"
 	"github.com/fuabr/tiaoban/utils"
 	"github.com/fuabr/tiaoban/utils/update"
@@ -23,7 +23,6 @@ import (
 var (
 	wx        *mp.WeiXin
 	lastNonce = ""
-	datas1    sync.Map
 	wxPush    func(id, kind, message string)
 )
 
@@ -212,14 +211,14 @@ func handleTextUserList(id, msg string) {
 		return
 	}
 
-	users, err := model.QueryWechatByCondition("")
+	users, err := model.QueryWechatUser()
 	if err != nil {
 		log.Errorln("获取用户列表出现错误" + err.Error())
 		return
 	}
 	message := ""
 	for _, user := range users {
-		message += fmt.Sprintf("open_id:%v\n\n备注：%v\n\n状态:%d", user.OpenID, user.Remark, user.Status)
+		message += fmt.Sprintf("open_id:%v\n\n备注：%v\n\n状态:%d", user.OpenId, user.Remark, user.Status)
 	}
 	sendMsg(id, message)
 }
@@ -242,8 +241,8 @@ func handleTextReject(id, msg string) {
 		log.Errorln("更新用户信息出现错误" + err.Error())
 		return
 	}
-	sendMsg(user.OpenID, "管理员已拒绝了你的使用申请！")
-	sendMsg(id, fmt.Sprintf("已拒绝用户(%v)%v使用", user.Remark, user.OpenID))
+	sendMsg(user.OpenId, "管理员已拒绝了你的使用申请！")
+	sendMsg(id, fmt.Sprintf("已拒绝用户(%v)%v使用", user.Remark, user.OpenId))
 }
 
 func handleTextPass(id, msg string) {
@@ -264,8 +263,8 @@ func handleTextPass(id, msg string) {
 		log.Errorln("更新用户信息出现错误" + err.Error())
 		return
 	}
-	sendMsg(user.OpenID, "管理员已通过了你的使用申请！")
-	sendMsg(id, fmt.Sprintf("已允许用户(%v)%v使用", user.Remark, user.OpenID))
+	sendMsg(user.OpenId, "管理员已通过了你的使用申请！")
+	sendMsg(id, fmt.Sprintf("已允许用户(%v)%v使用", user.Remark, user.OpenId))
 }
 
 // handleEventUseRequest
@@ -275,23 +274,19 @@ func handleTextPass(id, msg string) {
  */
 func handleEventUseRequest(id, msg string) {
 	user, err := model.FindWechatUser(id)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			err := model.AddWechatUser(&model.WechatUser{
-				OpenID:          id,
-				Remark:          "",
-				Status:          0,
-				LastRequestTime: time.Now().Unix(),
-			})
-			if err != nil {
-				log.Errorln("添加用户出现错误" + err.Error())
-				return
-			}
-			sendMsg(conf.GetConfig().Wechat.SuperOpenID, fmt.Sprintf("用户%v申请使用测试号，通过则回复信息：\n通过 %v\n\n拒绝则回复:\n拒绝 %v", id, id, id))
-		} else {
-			log.Errorln("查询用户出现未知错误" + err.Error())
+	if user.OpenId == "" {
+
+		err := model.AddWechatUser(&model.WechatUser{
+			OpenId:          id,
+			Remark:          "",
+			Status:          0,
+			LastRequestTime: time.Now().Unix(),
+		})
+		if err != nil {
+			log.Errorln("添加用户出现错误" + err.Error())
 			return
 		}
+		sendMsg(conf.GetConfig().Wechat.SuperOpenID, fmt.Sprintf("用户%v申请使用测试号，通过则回复信息：\n通过 %v\n\n拒绝则回复:\n拒绝 %v", id, id, id))
 
 	} else {
 		if err != nil {
@@ -334,7 +329,7 @@ func handleTextRemark(id, msg string) {
 	count := model.WechatUserCount(id)
 	if count < 1 {
 		err := model.AddWechatUser(&model.WechatUser{
-			OpenID:          id,
+			OpenId:          id,
 			Remark:          data,
 			Status:          0,
 			LastRequestTime: 0,
@@ -580,12 +575,11 @@ func handleStartStudy(id string, msg string) {
 	core.Init()
 	defer core.Quit()
 	for i, user := range users {
-		_, ok := datas1.Load(user.UID)
-		if ok {
-			log.Warningln("用户" + user.Nick + "已经在学习中了，跳过该用户")
+		if state.IsStudy(user.Uid) {
+			log.Infoln("该用户已经在学习中了，跳过学习")
 			continue
 		} else {
-			datas1.Store(user.UID, "")
+			state.Add(user.Uid, core)
 		}
 		sendMsg(id, fmt.Sprintf("开始学习第%d个用户，用户名：%v", i+1, user.Nick))
 		core.LearnArticle(user)
@@ -597,7 +591,7 @@ func handleStartStudy(id string, msg string) {
 			core.RespondDaily(user, "special")
 		}
 
-		datas1.Delete(user.UID)
+		state.Delete(user.Uid)
 		score, _ := lib.GetUserScore(user.ToCookies())
 		sendMsg(id, fmt.Sprintf("第%d个用户%v学习完成，学习积分\n%v", i+1, user.Nick, lib.FormatScore(score)))
 	}
@@ -627,6 +621,11 @@ func handleGetUser(id string, msg string) {
 			}
 		}
 
+	}
+	if message == "" {
+		log.Warningln("还未存在绑定的用户登录")
+		sendMsg(id, "你还没有已登陆的用户，请点击下方登录按钮登录！")
+		return
 	}
 	sendMsg(id, message)
 }
